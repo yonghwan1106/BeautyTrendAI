@@ -88,6 +88,20 @@ const sampleResponses: Record<string, string> = {
 글로벌 프리미엄 브랜드들이 자사 독자 성분 개발에 집중하고 있습니다. 차별화된 시그니처 성분 확보가 핵심 경쟁 요소가 될 것으로 보입니다.`,
 };
 
+function renderMarkdown(text: string) {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, index) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return (
+        <strong key={index} className="font-semibold text-[#E8D5A8]">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    return part;
+  });
+}
+
 function getAIResponse(message: string): string {
   const lowerMessage = message.toLowerCase();
 
@@ -212,7 +226,7 @@ export default function AssistantPage() {
                   }`}
                 >
                   <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                    {message.content}
+                    {renderMarkdown(message.content)}
                   </div>
                   <p className="mt-2 text-xs text-[rgba(245,240,235,0.4)]">
                     {message.timestamp.toLocaleTimeString("ko-KR", {
