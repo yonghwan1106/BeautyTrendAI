@@ -11,6 +11,48 @@ interface Message {
 }
 
 function renderMarkdown(text: string) {
+  const lines = text.split("\n");
+
+  return lines.map((line, lineIndex) => {
+    // Handle headers
+    if (line.startsWith("### ")) {
+      return (
+        <h4 key={lineIndex} className="font-semibold text-[#E8D5A8] mt-3 mb-1">
+          {renderBold(line.slice(4))}
+        </h4>
+      );
+    }
+    if (line.startsWith("## ")) {
+      return (
+        <h3 key={lineIndex} className="font-semibold text-[#E8D5A8] text-base mt-3 mb-1">
+          {renderBold(line.slice(3))}
+        </h3>
+      );
+    }
+    if (line.startsWith("# ")) {
+      return (
+        <h2 key={lineIndex} className="font-semibold text-[#E8D5A8] text-lg mt-3 mb-2">
+          {renderBold(line.slice(2))}
+        </h2>
+      );
+    }
+
+    // Handle empty lines
+    if (line.trim() === "") {
+      return <br key={lineIndex} />;
+    }
+
+    // Regular line with bold rendering
+    return (
+      <span key={lineIndex}>
+        {renderBold(line)}
+        {lineIndex < lines.length - 1 && <br />}
+      </span>
+    );
+  });
+}
+
+function renderBold(text: string) {
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
   return parts.map((part, index) => {
     if (part.startsWith("**") && part.endsWith("**")) {
@@ -180,7 +222,7 @@ export default function AssistantPage() {
                       : "border border-[rgba(201,169,98,0.15)] bg-[rgba(255,255,255,0.03)] text-[rgba(245,240,235,0.9)]"
                   }`}
                 >
-                  <div className="whitespace-pre-wrap text-sm leading-relaxed">
+                  <div className="text-sm leading-relaxed">
                     {renderMarkdown(message.content)}
                   </div>
                   <p className="mt-2 text-xs text-[rgba(245,240,235,0.4)]">
